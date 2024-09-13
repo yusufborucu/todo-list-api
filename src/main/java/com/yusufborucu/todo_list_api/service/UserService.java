@@ -1,6 +1,5 @@
 package com.yusufborucu.todo_list_api.service;
 
-import com.yusufborucu.todo_list_api.dto.LoginRequest;
 import com.yusufborucu.todo_list_api.dto.RegisterRequest;
 import com.yusufborucu.todo_list_api.model.User;
 import com.yusufborucu.todo_list_api.repository.UserRepository;
@@ -31,14 +30,6 @@ public class UserService implements UserDetailsService {
         user.setPassword(passwordEncoder.encode(registerRequest.getPassword()));
 
         return userRepository.save(user);
-    }
-
-    public Optional<User> login(LoginRequest loginRequest) {
-        Optional<User> user = userRepository.findByEmail(loginRequest.getEmail());
-        if (user.isPresent() && passwordEncoder.matches(loginRequest.getPassword(), user.get().getPassword())) {
-            return user;
-        }
-        return Optional.empty();
     }
 
     @Override
