@@ -58,7 +58,7 @@ public class Todo {
         this.description = description;
     }
 
-    public boolean isCompleted() {
+    public boolean getCompleted() {
         return completed;
     }
 
