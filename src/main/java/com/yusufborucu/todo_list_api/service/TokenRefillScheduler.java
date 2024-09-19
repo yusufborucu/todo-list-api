@@ -20,7 +20,6 @@ public class TokenRefillScheduler {
 
     @Scheduled(fixedRate = 60000)
     public void refillTokensForAllClients() {
-        System.out.println("REFILL LOG");
         Set<String> ipAddresses = redisTemplate.opsForSet().members("rate_limit_ips");
 
         for (String ipAddress : ipAddresses) {

@@ -7,6 +7,12 @@ import com.yusufborucu.todo_list_api.dto.RegisterResponse;
 import com.yusufborucu.todo_list_api.model.User;
 import com.yusufborucu.todo_list_api.security.JwtUtil;
 import com.yusufborucu.todo_list_api.service.UserService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -34,7 +40,22 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<RegisterResponse> register(@Valid @RequestBody RegisterRequest registerRequest) {
+    @Operation(
+        summary = "Register API",
+        description = "Register a new user",
+        responses = {
+            @ApiResponse(
+                responseCode = "201",
+                description = "Created",
+                content = @Content(schema = @Schema(implementation = RegisterResponse.class))
+            )
+        }
+    )
+    public ResponseEntity<RegisterResponse> register(
+        @Valid
+        @Parameter(in = ParameterIn.DEFAULT, required = true)
+        @RequestBody RegisterRequest registerRequest
+    ) {
         User createdUser = userService.register(registerRequest);
 
         RegisterResponse registerResponse = new RegisterResponse();
@@ -46,7 +67,22 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public AuthenticationResponse login(@Valid @RequestBody LoginRequest loginRequest) {
+    @Operation(
+        summary = "Login API",
+        description = "Login and get token",
+        responses = {
+            @ApiResponse(
+                responseCode = "200",
+                description = "OK",
+                content = @Content(schema = @Schema(implementation = AuthenticationResponse.class))
+            )
+        }
+    )
+    public AuthenticationResponse login(
+        @Valid
+        @Parameter(in = ParameterIn.DEFAULT, required = true)
+        @RequestBody LoginRequest loginRequest
+    ) {
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword())
         );
@@ -56,6 +92,17 @@ public class AuthController {
         return new AuthenticationResponse(token);
     }
 
+    @Operation(
+        summary = "Profile API",
+        description = "Get profile infos",
+        responses = {
+            @ApiResponse(
+                responseCode = "200",
+                description = "OK",
+                content = @Content(schema = @Schema(type = "string"))
+            )
+        }
+    )
     @GetMapping("/profile")
     public ResponseEntity<String> profile() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
